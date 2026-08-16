@@ -16,18 +16,13 @@ sliced-OT 和结构保持损失。
 
 ## 结果
 
-下面的每组图片都使用同一张风格参考图和相同的 5 个真实 COLMAP 测试相机，依次展示原场景、
-原版 FSS 实现生成的结果和 M2GFT 结果。
+下面选择了色彩明亮的风格参考图，并使用相同的 5 个真实 COLMAP 测试相机，依次展示原场景、
+标准 FSS 和 M2GFT。M2GFT 能形成更清晰的空间颜色分区，并更强地表达参考图中的色彩关系；
+相比之下，标准 FSS 更容易把风格平均成偏浅、偏均匀的整体外观。
 
 ![Truck 与 style1 对比](docs/results/truck_style1_comparison.png)
 
-![Family 与 style2 对比](docs/results/family_style2_comparison.png)
-
-在评估的 5 组场景/风格组合中，M2GFT 有 3 组取得更低的 VGG 风格统计误差，并且 5 组的
-平均饱和度都高于 FSS。多数情况下它的风格表达更加明显；但在 `train/style99` 和
-`truck/style99` 上也更加激进，这两组的 VGG 风格和内容数值由标准 FSS 占优。
-
-全部图片与指标见[完整对比](docs/RESULTS.md)。
+更多结果见[精选对比](docs/RESULTS.md)。
 
 ## 安装
 

@@ -18,20 +18,14 @@ color OT, and structure-preserving losses.
 
 ## Results
 
-The figures below use the same style reference and the same five real COLMAP test
-cameras for the original scene, the output produced by the original FSS
-implementation, and M2GFT.
+The selected comparisons use bright style references and the same five real COLMAP
+test cameras for the original scene, standard FSS, and M2GFT. M2GFT produces clearer
+spatial color separation and a stronger transfer of the reference palette, while the
+standard FSS results tend to average the style into a lighter, more uniform appearance.
 
 ![Truck and style1 comparison](docs/results/truck_style1_comparison.png)
 
-![Family and style2 comparison](docs/results/family_style2_comparison.png)
-
-Across the five evaluated scene/style pairs, M2GFT obtains a lower VGG style-stat
-error in three cases and higher mean saturation in all five. It generally produces a
-more pronounced style, although it is more aggressive on `train/style99` and
-`truck/style99`, where standard FSS has better VGG style and content scores.
-
-See [the complete comparison](docs/RESULTS.md) for all figures and metrics.
+See [more selected comparisons](docs/RESULTS.md).
 
 ## Installation
 
