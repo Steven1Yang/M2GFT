@@ -1,0 +1,26 @@
+{
+  "garden": {
+    "dataset_root": "/path/to/datasets/mipnerf360/garden",
+    "gaussians": "/path/to/content_splats/garden.splat"
+  },
+  "family": {
+    "dataset_root": "/path/to/datasets/tanks_and_temples/family",
+    "gaussians": "/path/to/content_splats/family.ply"
+  },
+  "horse": {
+    "dataset_root": "/path/to/datasets/tanks_and_temples/horse",
+    "gaussians": "/path/to/content_splats/horse.ply"
+  },
+  "m60": {
+    "dataset_root": "/path/to/datasets/tanks_and_temples/m60",
+    "gaussians": "/path/to/content_splats/m60.ply"
+  },
+  "train": {
+    "dataset_root": "/path/to/datasets/tanks_and_temples/train",
+    "gaussians": "/path/to/content_splats/train.splat"
+  },
+  "truck": {
+    "dataset_root": "/path/to/datasets/tanks_and_temples/truck",
+    "gaussians": "/path/to/content_splats/truck.splat"
+  }
+}

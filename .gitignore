@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+runs/
+evaluations/
+weights/
+*.pt
+*.pth
+.cuda-toolkit/
+configs/scenes.local.json
+style_ims/
+*.splat
+*.ply
+*.log
+.DS_Store

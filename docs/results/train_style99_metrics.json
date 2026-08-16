@@ -1,0 +1,251 @@
+{
+  "num_test_views": 5,
+  "methods": [
+    "fss",
+    "m2gft"
+  ],
+  "style_reference": "style99.jpg",
+  "pixel_and_appearance_metrics": {
+    "fss_vs_original_l1": {
+      "mean": 0.2934294492006302,
+      "std": 0.04713784595601163,
+      "min": 0.24623744189739227,
+      "max": 0.3563670516014099
+    },
+    "fss_vs_original_psnr": {
+      "mean": 9.2474164480106,
+      "std": 1.1780160776458064,
+      "min": 7.736779233353362,
+      "max": 10.728530905270832
+    },
+    "fss_vs_original_ssim": {
+      "mean": 0.38571016788482665,
+      "std": 0.057977147376456144,
+      "min": 0.30660632252693176,
+      "max": 0.4775966703891754
+    },
+    "m2gft_vs_original_l1": {
+      "mean": 0.36842470765113833,
+      "std": 0.06507950691653865,
+      "min": 0.2945398688316345,
+      "max": 0.45581451058387756
+    },
+    "m2gft_vs_original_psnr": {
+      "mean": 7.4860763646905415,
+      "std": 1.2905160924856958,
+      "min": 5.907812934042667,
+      "max": 9.244454967199495
+    },
+    "m2gft_vs_original_ssim": {
+      "mean": 0.26160612106323244,
+      "std": 0.04839623237075761,
+      "min": 0.1868576556444168,
+      "max": 0.3292073607444763
+    },
+    "fss_vs_m2gft_l1": {
+      "mean": 0.08464216068387032,
+      "std": 0.017095859609757805,
+      "min": 0.06232183799147606,
+      "max": 0.10323408991098404
+    },
+    "fss_vs_m2gft_psnr": {
+      "mean": 19.946124455794305,
+      "std": 1.3604671236106616,
+      "min": 18.346433298656827,
+      "max": 21.698642880130393
+    },
+    "fss_vs_m2gft_ssim": {
+      "mean": 0.7338178157806396,
+      "std": 0.03632176123167169,
+      "min": 0.6868260502815247,
+      "max": 0.7793616652488708
+    },
+    "original_mean_saturation": {
+      "mean": 0.21325367391109468,
+      "std": 0.046418980830490834,
+      "min": 0.13345377147197723,
+      "max": 0.27385765314102173
+    },
+    "original_mean_luminance": {
+      "mean": 0.48643654584884644,
+      "std": 0.07513070467313604,
+      "min": 0.40262264013290405,
+      "max": 0.5948655605316162
+    },
+    "original_luminance_p05": {
+      "mean": 0.1407353937625885,
+      "std": 0.0616972377434039,
+      "min": 0.06694980710744858,
+      "max": 0.21986204385757446
+    },
+    "original_luminance_p95": {
+      "mean": 0.7822685241699219,
+      "std": 0.09978004866536197,
+      "min": 0.6422949433326721,
+      "max": 0.941037654876709
+    },
+    "original_highlight_fraction": {
+      "mean": 0.0003163512323943662,
+      "std": 0.0006327024647887324,
+      "min": 0.0,
+      "max": 0.001581756161971831
+    },
+    "original_shadow_fraction": {
+      "mean": 8.115096830985916e-05,
+      "std": 0.0001623019366197183,
+      "min": 0.0,
+      "max": 0.0004057548415492958
+    },
+    "original_channel_high_clip_fraction": {
+      "mean": 1.8339201877934272e-06,
+      "std": 3.6678403755868544e-06,
+      "min": 0.0,
+      "max": 9.169600938967136e-06
+    },
+    "original_channel_low_clip_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "original_mean_abs_gradient": {
+      "mean": 0.02211349532008171,
+      "std": 0.003309334979123322,
+      "min": 0.01603367179632187,
+      "max": 0.026037417352199554
+    },
+    "fss_mean_saturation": {
+      "mean": 0.19445188641548156,
+      "std": 0.02607525333339357,
+      "min": 0.15398500859737396,
+      "max": 0.23472578823566437
+    },
+    "fss_mean_luminance": {
+      "mean": 0.2002156376838684,
+      "std": 0.027897305939431485,
+      "min": 0.15880319476127625,
+      "max": 0.24288739264011383
+    },
+    "fss_luminance_p05": {
+      "mean": 0.08883357048034668,
+      "std": 0.013860568694710956,
+      "min": 0.06467058509588242,
+      "max": 0.1039113774895668
+    },
+    "fss_luminance_p95": {
+      "mean": 0.4110104739665985,
+      "std": 0.09902606877729571,
+      "min": 0.2828831374645233,
+      "max": 0.5301437377929688
+    },
+    "fss_highlight_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "fss_shadow_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "fss_channel_high_clip_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "fss_channel_low_clip_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "fss_mean_abs_gradient": {
+      "mean": 0.006985690165311098,
+      "std": 0.002135343222420317,
+      "min": 0.00441989628598094,
+      "max": 0.010666897520422935
+    },
+    "m2gft_mean_saturation": {
+      "mean": 0.2262863487005234,
+      "std": 0.010597730798989949,
+      "min": 0.20923471450805664,
+      "max": 0.23834018409252167
+    },
+    "m2gft_mean_luminance": {
+      "mean": 0.11923894137144089,
+      "std": 0.014558904143346938,
+      "min": 0.10045819729566574,
+      "max": 0.13724394142627716
+    },
+    "m2gft_luminance_p05": {
+      "mean": 0.04225349128246307,
+      "std": 0.006993752308583528,
+      "min": 0.03223764896392822,
+      "max": 0.04842274636030197
+    },
+    "m2gft_luminance_p95": {
+      "mean": 0.321851971745491,
+      "std": 0.10287175429762262,
+      "min": 0.1959953010082245,
+      "max": 0.45730429887771606
+    },
+    "m2gft_highlight_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "m2gft_shadow_fraction": {
+      "mean": 0.00011278609154929577,
+      "std": 0.0001930326231607486,
+      "min": 0.0,
+      "max": 0.0004951584507042253
+    },
+    "m2gft_channel_high_clip_fraction": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "m2gft_channel_low_clip_fraction": {
+      "mean": 5.0891285211267606e-05,
+      "std": 0.00010178257042253521,
+      "min": 0.0,
+      "max": 0.000254456426056338
+    },
+    "m2gft_mean_abs_gradient": {
+      "mean": 0.006364102382212878,
+      "std": 0.002526179030004263,
+      "min": 0.0038110134191811085,
+      "max": 0.010701622813940048
+    }
+  },
+  "vgg_metrics": {
+    "original": {
+      "gram": 0.04000248089432716,
+      "stat": 4.904774284362793,
+      "content": 0.0
+    },
+    "fss": {
+      "gram": 0.009405951760709286,
+      "stat": 1.3188691854476928,
+      "content": 1.4912139654159546
+    },
+    "m2gft": {
+      "gram": 0.010090801399201155,
+      "stat": 1.4371573209762574,
+      "content": 1.6605336904525756
+    }
+  },
+  "interpretation": {
+    "pixel_vs_original": "Lower L1 / higher PSNR and SSIM mean more original appearance is retained.",
+    "vgg_gram_and_stat": "Style-reference discrepancy measured with the frozen M2GFT evaluation VGG; lower is better.",
+    "vgg_content": "VGG r31 discrepancy from the original render; lower is better.",
+    "highlight_and_clip_fractions": "Higher values indicate more very bright or channel-clipped pixels.",
+    "mean_saturation": "Higher values indicate stronger color saturation.",
+    "mean_abs_gradient": "A simple image-space sharpness/edge-strength indicator."
+  }
+}
