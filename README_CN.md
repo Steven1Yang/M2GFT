@@ -22,7 +22,7 @@ sliced-OT 和结构保持损失。
 
 ![Truck 与 style1 对比](docs/results/truck_style1_comparison.png)
 
-更多结果见[精选对比](docs/RESULTS.md)。
+![Horse 与 style8 对比](docs/results/horse_style8_comparison.png)
 
 ## 安装
 

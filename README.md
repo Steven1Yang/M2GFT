@@ -18,14 +18,14 @@ color OT, and structure-preserving losses.
 
 ## Results
 
-The selected comparisons use bright style references and the same five real COLMAP
+The comparisons below use bright style references and the same five real COLMAP
 test cameras for the original scene, standard FSS, and M2GFT. M2GFT produces clearer
 spatial color separation and a stronger transfer of the reference palette, while the
 standard FSS results tend to average the style into a lighter, more uniform appearance.
 
 ![Truck and style1 comparison](docs/results/truck_style1_comparison.png)
 
-See [more selected comparisons](docs/RESULTS.md).
+![Horse and style8 comparison](docs/results/horse_style8_comparison.png)
 
 ## Installation
 
