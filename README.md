@@ -14,18 +14,32 @@ generation before decoding the transformed graph features to RGB.
 M2GFT therefore strengthens the feature-generation backbone rather than adding an
 image-space refinement stage. Its training objective combines multi-level
 Gram/statistics matching, saliency-guided Patch-SWD, SWD, contextual matching, sliced
-color OT, and structure-preserving losses.
+color OT, structure-preserving losses, and a one-sided multi-scale luminance guard
+that suppresses contiguous dark-region collapse without weakening vivid style colors.
 
 ## Results
 
-The comparisons below use bright style references and the same five real COLMAP
-test cameras for the original scene, standard FSS, and M2GFT. M2GFT produces clearer
-spatial color separation and a stronger transfer of the reference palette, while the
-standard FSS results tend to average the style into a lighter, more uniform appearance.
+Every comparison below renders the original scene, the FSS R41 reference path, and
+M2GFT from the same Gaussian cloud with identical real COLMAP camera matrices and
+resolution. M2GFT produces clearer spatial color separation and a stronger transfer of
+the reference palette, while suppressing the contiguous dark-region artifacts found in
+the earlier model.
 
 ![Truck and style1 comparison](docs/results/truck_style1_comparison.png)
 
-![Horse and style8 comparison](docs/results/horse_style8_comparison.png)
+![Horse and style44 comparison](docs/results/horse_style44_comparison.png)
+
+![Garden and style2 comparison](docs/results/garden_style2_comparison.png)
+
+![Train and style40 comparison](docs/results/train_style40_comparison.png)
+
+![Train and Starry Night comparison](docs/results/train_style100_comparison.png)
+
+![Garden and Great Wave comparison](docs/results/garden_style66_comparison.png)
+
+![Truck and style19 comparison](docs/results/truck_style19_comparison.png)
+
+![Horse and style0 comparison](docs/results/horse_style0_comparison.png)
 
 ## Installation
 

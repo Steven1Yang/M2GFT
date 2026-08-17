@@ -12,17 +12,30 @@ FSS 主要在粗粒度 R41 图特征层完成风格变换。M2GFT 将这条路�
 
 因此，M2GFT 加重的是特征生成主干，而不是在最终图像上追加 refine 模块。训练目标联合使用
 多层 Gram/统计量匹配、saliency-guided Patch-SWD、SWD、contextual matching、颜色
-sliced-OT 和结构保持损失。
+sliced-OT、结构保持损失，以及单边多尺度亮度约束。该约束用于抑制连续区域的亮度塌陷，
+同时尽量保留高饱和度的风格色彩。
 
 ## 结果
 
-下面选择了色彩明亮的风格参考图，并使用相同的 5 个真实 COLMAP 测试相机，依次展示原场景、
-标准 FSS 和 M2GFT。M2GFT 能形成更清晰的空间颜色分区，并更强地表达参考图中的色彩关系；
-相比之下，标准 FSS 更容易把风格平均成偏浅、偏均匀的整体外观。
+下面每组对比均使用同一份 Gaussian、完全相同的真实 COLMAP 相机矩阵和相同分辨率，依次展示
+原场景、FSS R41 基准路径和 M2GFT。M2GFT 能形成更清晰的空间颜色分区，更强地表达参考图
+中的色彩关系，并抑制旧模型中出现的连续暗块。
 
 ![Truck 与 style1 对比](docs/results/truck_style1_comparison.png)
 
-![Horse 与 style8 对比](docs/results/horse_style8_comparison.png)
+![Horse 与 style44 对比](docs/results/horse_style44_comparison.png)
+
+![Garden 与 style2 对比](docs/results/garden_style2_comparison.png)
+
+![Train 与 style40 对比](docs/results/train_style40_comparison.png)
+
+![Train 与星月夜风格对比](docs/results/train_style100_comparison.png)
+
+![Garden 与神奈川冲浪里风格对比](docs/results/garden_style66_comparison.png)
+
+![Truck 与 style19 对比](docs/results/truck_style19_comparison.png)
+
+![Horse 与 style0 对比](docs/results/horse_style0_comparison.png)
 
 ## 安装
 

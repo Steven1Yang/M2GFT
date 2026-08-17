@@ -10,7 +10,11 @@ import torch.nn.functional as F
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from m2gft.losses import reference_relative_boundary_losses, reference_relative_perceptual_losses
+from m2gft.losses import (
+    luminance_collapse_losses,
+    reference_relative_boundary_losses,
+    reference_relative_perceptual_losses,
+)
 
 
 class TinyPyramid(torch.nn.Module):
@@ -79,7 +83,28 @@ def test_boundary_guard_is_zero_at_reference_and_penalizes_only_degradation():
     assert degraded.grad is not None
 
 
+def test_luminance_guard_targets_dark_regions_without_penalizing_safe_output():
+    reference = torch.full((1, 3, 32, 32), 0.6)
+    content = torch.full_like(reference, 0.5)
+    safe = torch.full_like(reference, 0.45, requires_grad=True)
+    safe_losses = luminance_collapse_losses(safe, reference, content)
+    assert float(safe_losses["shadow_guard"]) == 0.0
+    assert float(safe_losses["luminance_guard"]) == 0.0
+
+    collapsed = safe.detach().clone()
+    collapsed[:, :, 8:24, 8:24] = 0.02
+    collapsed.requires_grad_(True)
+    losses = luminance_collapse_losses(collapsed, reference, content)
+    assert float(losses["pixel_shadow_guard"]) > 0.0
+    assert float(losses["region_shadow_guard"]) > 0.0
+    assert float(losses["shadow_deficit_fraction"]) > 0.0
+    (losses["shadow_guard"] + losses["luminance_guard"]).backward()
+    assert collapsed.grad is not None
+    assert float(collapsed.grad[:, :, 8:24, 8:24].abs().sum()) > 0.0
+
+
 if __name__ == "__main__":
     test_equal_output_and_reference_have_unit_ratios_and_gradients()
     test_boundary_guard_is_zero_at_reference_and_penalizes_only_degradation()
+    test_luminance_guard_targets_dark_regions_without_penalizing_safe_output()
     print("reference-relative loss tests passed")

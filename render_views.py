@@ -59,12 +59,22 @@ def main() -> None:
         type=Path,
         help="Optional splat produced by the original FastSplatStyler implementation",
     )
+    parser.add_argument(
+        "--include-reference",
+        action="store_true",
+        help=(
+            "Render the model's FSS R41 reference path on the same Gaussian cloud and "
+            "COLMAP cameras; this guarantees pose-aligned comparisons"
+        ),
+    )
     parser.add_argument("--split", choices=("train", "test", "all"), default="test")
     parser.add_argument("--max-views", type=int, default=8)
     parser.add_argument("--max-image-side", type=int, default=512)
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--device", default="cuda:0")
     args = parser.parse_args()
+    if args.include_reference and args.fss_splat:
+        parser.error("--include-reference and --fss-splat are mutually exclusive")
 
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     if checkpoint.get("architecture") != ARCHITECTURE_ID:
@@ -108,6 +118,11 @@ def main() -> None:
     with torch.inference_mode():
         details = model(graph.data, style, return_details=True)
         m2gft_colors = interpolate_node_values(details["rgb"], graph)
+        reference_colors = (
+            interpolate_node_values(details["reference_rgb"], graph)
+            if args.include_reference
+            else None
+        )
 
     args.output.mkdir(parents=True, exist_ok=True)
     rendered = 0
@@ -124,7 +139,19 @@ def main() -> None:
                 viewmats, Ks, width, height,
             )
             fss = None
-            if fss_cloud is not None:
+            if reference_colors is not None:
+                fss = render_gaussians(
+                    cloud.means,
+                    cloud.quats,
+                    cloud.scales,
+                    cloud.opacities,
+                    reference_colors,
+                    viewmats,
+                    Ks,
+                    width,
+                    height,
+                )
+            elif fss_cloud is not None:
                 fss = render_gaussians(
                     fss_cloud.means,
                     fss_cloud.quats,
@@ -153,6 +180,11 @@ def main() -> None:
         "scene_was_held_out": args.scene in set(checkpoint.get("heldout_scenes", [])),
         "style": str(args.style.resolve()),
         "fss_splat": str(args.fss_splat.resolve()) if args.fss_splat else None,
+        "fss_source": (
+            "pose-aligned R41 graph reference"
+            if args.include_reference
+            else ("external FastSplatStyler splat" if args.fss_splat else None)
+        ),
         "style_was_held_out": args.style.stem.lower()
         in {Path(value).stem.lower() for value in checkpoint.get("heldout_styles", [])},
         "split": args.split,
@@ -166,7 +198,9 @@ def main() -> None:
             (details["rgb"] - details["reference_rgb"]).abs().mean()
         ),
         "num_views": rendered,
-        "methods": ["fss", "m2gft"] if args.fss_splat else ["m2gft"],
+        "methods": ["fss", "m2gft"]
+        if (args.include_reference or args.fss_splat)
+        else ["m2gft"],
     }
     (args.output / "render_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(json.dumps(metadata, indent=2))

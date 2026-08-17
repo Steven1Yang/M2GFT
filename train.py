@@ -12,10 +12,14 @@ import torch
 import torch.nn.functional as F
 
 from m2gft.colmap import ColmapScene
-from m2gft.checkpoint import ARCHITECTURE_ID
+from m2gft.checkpoint import ARCHITECTURE_ID, load_m2gft_checkpoint
 from m2gft.model import M2GFTStylizer
 from m2gft.graph import interpolate_node_values
-from m2gft.losses import reference_relative_boundary_losses, reference_relative_perceptual_losses
+from m2gft.losses import (
+    luminance_collapse_losses,
+    reference_relative_boundary_losses,
+    reference_relative_perceptual_losses,
+)
 from m2gft.render import render_gaussians
 from m2gft.experiment import (
     DEFAULT_DECODER,
@@ -31,7 +35,7 @@ from m2gft.experiment import (
 
 
 ARCHITECTURE = ARCHITECTURE_ID
-LOSS_PROTOCOL = "m2gft_spatial_style_v1"
+LOSS_PROTOCOL = "m2gft_spatial_style_shadow_guard_v2"
 
 
 def parse_args():
@@ -96,6 +100,11 @@ def parse_args():
     parser.add_argument("--weight-range", type=float, default=50.0)
     parser.add_argument("--weight-soft-clip", type=float, default=0.50)
     parser.add_argument("--soft-clip-temperature", type=float, default=0.01)
+    parser.add_argument("--weight-shadow", type=float, default=4.0)
+    parser.add_argument("--weight-luminance", type=float, default=1.0)
+    parser.add_argument("--shadow-reference-ratio", type=float, default=0.72)
+    parser.add_argument("--shadow-content-ratio", type=float, default=0.55)
+    parser.add_argument("--shadow-maximum-floor", type=float, default=0.30)
     parser.add_argument("--weight-distill", type=float, default=0.02)
     parser.add_argument("--distill-iters", type=int, default=10)
     parser.add_argument("--identity-every", type=int, default=32)
@@ -203,6 +212,12 @@ def main():
             "RGB sliced-OT",
         ],
         "content_losses": ["relative VGG guard", "r31 self-similarity", "edge guard"],
+        "shadow_stability": {
+            "type": "one-sided local and regional luminance-collapse guard",
+            "reference_ratio": args.shadow_reference_ratio,
+            "content_ratio": args.shadow_content_ratio,
+            "maximum_floor": args.shadow_maximum_floor,
+        },
         "pixel_l1_training_weight": 0.0,
         "max_graph_nodes": args.max_graph_nodes,
         "max_image_side": args.max_image_side,
@@ -245,8 +260,11 @@ def main():
                 group["lr"] = 0.0
     optimizer = torch.optim.AdamW(groups, betas=(0.9, 0.99), weight_decay=1e-4)
     if checkpoint is not None:
-        model.load_state_dict(checkpoint["model"], strict=True)
-        optimizer.load_state_dict(checkpoint["optimizer"])
+        load_m2gft_checkpoint(model, checkpoint)
+        if "optimizer" in checkpoint:
+            optimizer.load_state_dict(checkpoint["optimizer"])
+        else:
+            print("[resume] compact checkpoint: initialized a fresh optimizer")
         if decoder_enabled:
             set_decoder_group_lr(optimizer, args.lr * args.decoder_lr_scale)
         print(f"[resume] {args.resume}: iteration={start_iteration}")
@@ -371,6 +389,16 @@ def main():
                 temperature=args.soft_clip_temperature,
             )
         )
+        components.update(
+            luminance_collapse_losses(
+                output_images,
+                reference_images,
+                original_images,
+                reference_ratio=args.shadow_reference_ratio,
+                content_ratio=args.shadow_content_ratio,
+                maximum_floor=args.shadow_maximum_floor,
+            )
+        )
         distill_decay = max(
             0.0,
             1.0 - float(iteration - 1) / float(max(args.distill_iters, 1)),
@@ -407,6 +435,8 @@ def main():
             "edge_guard": args.weight_edge,
             "range": args.weight_range,
             "soft_clip": args.weight_soft_clip,
+            "shadow_guard": args.weight_shadow,
+            "luminance_guard": args.weight_luminance,
             "distill": args.weight_distill * distill_decay,
             "identity": args.weight_identity if identity_active else 0.0,
         }
@@ -455,6 +485,9 @@ def main():
                 f"structure={latest['structure_ratio']:.3f} edge={latest['edge_ratio']:.3f} "
                 f"node_delta={latest['m2gft_vs_reference_node_l1']:.4f} "
                 f"range_guard={latest['range']:.5f} "
+                f"shadow={latest['shadow_guard']:.4f} "
+                f"luma={latest['output_mean_luminance']:.3f}/"
+                f"{latest['reference_mean_luminance']:.3f} "
                 f"out_range={latest['raw_out_of_range_fraction']:.4f}"
             )
         if iteration % args.save_every == 0 or iteration == args.iterations:

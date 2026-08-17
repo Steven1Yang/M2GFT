@@ -9,6 +9,76 @@ from .conditioning import FrozenImagePyramid, feature_mean_std, gram_matrix
 
 
 STYLE_LEVELS = ("r11", "r21", "r31", "r41")
+LUMINANCE_WEIGHTS = (0.2126, 0.7152, 0.0722)
+
+
+def _luminance(images: torch.Tensor) -> torch.Tensor:
+    if images.ndim != 4 or images.shape[1] != 3:
+        raise ValueError(f"Expected RGB images [B,3,H,W], got {tuple(images.shape)}")
+    weights = images.new_tensor(LUMINANCE_WEIGHTS).reshape(1, 3, 1, 1)
+    return (images * weights).sum(dim=1, keepdim=True)
+
+
+def luminance_collapse_losses(
+    output_images: torch.Tensor,
+    reference_images: torch.Tensor,
+    content_images: torch.Tensor,
+    *,
+    reference_ratio: float = 0.72,
+    content_ratio: float = 0.55,
+    maximum_floor: float = 0.30,
+    region_kernels: Sequence[int] = (9, 25),
+) -> dict[str, torch.Tensor]:
+    """Penalize coherent shadow collapse without constraining stylized chroma.
+
+    The guard is one-sided: output that is already bright enough receives no
+    penalty. Multi-scale pooling makes a large dark graph region cost more than
+    legitimate high-frequency dark strokes from the style image.
+    """
+    output_luminance = _luminance(output_images)
+    with torch.no_grad():
+        reference_luminance = _luminance(reference_images)
+        content_luminance = _luminance(content_images)
+        floor = torch.maximum(
+            float(reference_ratio) * reference_luminance,
+            float(content_ratio) * content_luminance,
+        ).clamp(max=float(maximum_floor))
+
+    pixel_deficit = F.relu(floor - output_luminance)
+    region_deficit = output_luminance.new_zeros(())
+    valid_kernels = 0
+    for raw_kernel in region_kernels:
+        kernel = int(raw_kernel)
+        if kernel <= 1:
+            continue
+        if kernel % 2 == 0:
+            raise ValueError("Luminance region kernels must be odd")
+        pooled_output = F.avg_pool2d(
+            output_luminance, kernel, stride=1, padding=kernel // 2
+        )
+        pooled_floor = F.avg_pool2d(floor, kernel, stride=1, padding=kernel // 2)
+        region_deficit = region_deficit + F.relu(pooled_floor - pooled_output).mean()
+        valid_kernels += 1
+    if valid_kernels:
+        region_deficit = region_deficit / float(valid_kernels)
+
+    output_mean = output_luminance.mean(dim=(1, 2, 3))
+    reference_mean = reference_luminance.mean(dim=(1, 2, 3))
+    content_mean = content_luminance.mean(dim=(1, 2, 3))
+    mean_floor = torch.maximum(
+        float(reference_ratio) * reference_mean,
+        float(content_ratio) * content_mean,
+    )
+    return {
+        "shadow_guard": pixel_deficit.mean() + region_deficit,
+        "pixel_shadow_guard": pixel_deficit.mean(),
+        "region_shadow_guard": region_deficit,
+        "luminance_guard": F.relu(mean_floor - output_mean).mean(),
+        "shadow_deficit_fraction": (output_luminance < floor).float().mean().detach(),
+        "output_mean_luminance": output_mean.mean().detach(),
+        "reference_mean_luminance": reference_mean.mean().detach(),
+        "content_mean_luminance": content_mean.mean().detach(),
+    }
 
 
 def reference_relative_boundary_losses(
